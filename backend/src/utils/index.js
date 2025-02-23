@@ -1,4 +1,4 @@
 
 module.exports ={
-    AppError: require('./errors')
+    AppError: require('./errors/app-error')
 }
