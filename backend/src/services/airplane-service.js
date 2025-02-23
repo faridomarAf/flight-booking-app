@@ -24,6 +24,20 @@ const createAirplance = async (data)=>{
 };
 
 
+const getAirplanes = async ()=>{
+    const airplaneRepository = new AirplaneRepository();
+
+    try {
+        const airplanes = await airplaneRepository.getAll();
+        return airplanes;
+    } catch (error) {
+        //here no need to handle validation error, be cause its just a get function
+        throw new AppError("Connot fetch data of all airplanes!", StatusCodes.INTERNAL_SERVER_ERROR);//handle server-error
+    }
+}
+
+
 module.exports ={
     createAirplance,
+    getAirplanes,
 }

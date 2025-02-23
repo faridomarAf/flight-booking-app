@@ -109,3 +109,7 @@ module.exports = {
 ================================= third step:=>  ============================
 timeline minutes: 2:11
 
+. crud-repository modified, try-catch removed from the code-file, because the error-hanldling logic would be handling in service-files
+
+1: add the getAriplane service, getAirplane to the controller, getAirplane to the routes.
+
