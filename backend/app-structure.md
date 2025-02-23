@@ -1,3 +1,6 @@
+============================= Flight booking application =============
+the whole applicatin is a micro-service application.
+
 1: people could get an end-to-end flight booking
 2: they could search for flight integerated with data selection, 
 number of persons, 
@@ -26,7 +29,7 @@ and finally search for that
 . option to cancel the boarding
 . update user regarding any delay in flight time
 
-================================= After our first curd adding airplane ============================
+================================= After our first curd adding airplane : First step ============================
 
 1: we created airplane-middleware to handle the correct error of 400-bad request instead of 500 which was by default, which occurs when the use send null-value for 'modelNumber' or wrong format of input.
 
@@ -40,3 +43,68 @@ why we did that:
 3: create error-response && success-response object insid the: utils/common directory
 why we did that:
 . to avoid writing raw message in our application
+
+================================= Second step ============================
+
+1: created the seeders file: inside seeeders directory,
+
+why we do that: 
+seeder-files used to : populating the database with initial or test data.
+Use Case: nitializing Data, Testing, Development, Demo Environments
+
+use this command to initialize seeder-file:=> px sequelize seed:generate --name add-airplane [it will create a seed-file with the name of add-airplane].
+
+we should modify our seed-file regarding to our database-structure, below is an example:
+
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    /**
+     * Add seed commands here.
+     *
+     * Example:
+     * await queryInterface.bulkInsert('People', [{
+     *   name: 'John Doe',
+     *   isBetaMember: false
+     * }], {});
+    */
+
+    await queryInterface.bulkInsert('Airplanes',[
+      {
+        modelNumber: 'airbus380',
+        capacity: 900,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        modelNumber: 'airbus390',
+        capacity: 800,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+    ])
+  },
+
+  async down (queryInterface, Sequelize) {
+    /**
+     * Add commands to revert seed here.
+     *
+     * Example:
+     * await queryInterface.bulkDelete('People', null, {});
+     */
+
+    await queryInterface.bulkDelete('Airplanes',
+    {[Op.or]: [
+      {modelNumber: 'airbus390'},
+      {modelNumber: 'airbus380'},
+    ]})
+  }
+};
+
+
+
+. run this command to apply all seed-files to database:=> [npx sequelize db:seed:all]
+. to undo all seeded files run this commond: [npx sequelize db:seed:undo:all]
+
+
+================================= third step:=>  ============================
+
