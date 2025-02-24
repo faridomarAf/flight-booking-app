@@ -111,5 +111,6 @@ timeline minutes: 2:11
 
 . crud-repository modified, try-catch removed from the code-file, because the error-hanldling logic would be handling in service-files
 
-1: add the getAriplane service, getAirplane to the controller, getAirplane to the routes.
+1: add the getAriplanes service, getAirplanes to the controller, getAirplanes to the routes.
+2: add the getAriplane by ID service, getAirplane to the controller, getAirplane to the routes.
 
