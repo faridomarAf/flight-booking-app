@@ -46,9 +46,22 @@ const getCities = async()=>{
     }
 }
 
+const getCity = async (id)=>{
+    const cityRepository = new CityRepository();
+    try {
+        const city = await cityRepository.get(id);
+        return city
+    } catch (error) {
+        if(error.statusCode === StatusCodes.NOT_FOUND){
+            throw new AppError('The city you requested is not found!', error.statusCode);
+        }
+        throw new AppError('Connot found city with this ID', error.statusCode);
+    }
+}
 
 module.exports ={
     createCity,
     updateCity,
-    getCities
+    getCities,
+    getCity
 }

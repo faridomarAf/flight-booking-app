@@ -119,3 +119,9 @@ timeline minutes: 2:11
 ================================= 4 step:=> add city model 2:37 ============================
 1: to create city model:=> npx sequelize model:generate --name City --attributes name:string
 2: to add city model to db:=> npx sequeliz db:migrate
+
+. create route for city done
+. updated route for city done
+. get all-cities route done
+. get city-by-Id route done
+.

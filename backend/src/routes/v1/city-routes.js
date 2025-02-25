@@ -6,5 +6,6 @@ const router = express.Router();
 router.post('/', CityController.createCity);
 router.patch('/:id', CityController.updateCity);
 router.get('/', CityController.getCities);
+router.get('/:id', CityController.getCity);
 
 module.exports = router;
