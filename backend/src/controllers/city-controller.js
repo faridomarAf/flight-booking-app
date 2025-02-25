@@ -33,7 +33,20 @@ const updateCity = async (req, res)=>{
     }
 }
 
+//Get all cities
+const getCities = async(req, res)=>{
+    try {
+        const cities = await CityService.getCities();
+        SuccessResponse.data = cities;
+        return res.status(StatusCodes.OK).json(cities);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+}
+
 module.exports ={
     createCity,
-    updateCity
+    updateCity,
+    getCities
 }
