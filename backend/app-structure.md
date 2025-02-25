@@ -124,4 +124,5 @@ timeline minutes: 2:11
 . updated route for city done
 . get all-cities route done
 . get city-by-Id route done
-.
+. delete route for city done
+

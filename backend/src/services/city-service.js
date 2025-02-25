@@ -57,11 +57,25 @@ const getCity = async (id)=>{
         }
         throw new AppError('Connot found city with this ID', error.statusCode);
     }
+};
+
+const destroyCity = async(id)=>{
+    const cityRepository = new CityRepository();
+    try {
+        const response = await cityRepository.destroy(id);
+        return response;
+    } catch (error) {
+        if(error.statusCode === StatusCodes.NOT_FOUND){
+            throw new AppError('The city you request to delete not found!', StatusCodes.NOT_FOUND);
+        }
+        throw new AppError('Cannot delete the city', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
 }
 
 module.exports ={
     createCity,
     updateCity,
     getCities,
-    getCity
+    getCity,
+    destroyCity
 }
