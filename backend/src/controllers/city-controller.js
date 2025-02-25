@@ -2,6 +2,7 @@ const {CityService} = require('../services');
 const {ErrorResponse, SuccessResponse} = require('../utils/common');
 const {StatusCodes} = require('http-status-codes');
 
+//Create City
 const createCity = async(req, res)=>{
     const {name} = req.body;
 
@@ -15,8 +16,24 @@ const createCity = async(req, res)=>{
         ErrorResponse.error = error;
         return res.status(error.statusCode).json(ErrorResponse);
     }
+};
+
+//Update City
+const updateCity = async (req, res)=>{
+    const id = req.params.id
+    const name = req.body;
+
+    try {
+        const updatedCity = await CityService.updateCity(id, name)
+        SuccessResponse.data = updatedCity;
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
 }
 
 module.exports ={
     createCity,
+    updateCity
 }

@@ -20,8 +20,38 @@ const createCity = async(data)=>{
 }
 throw new AppError('Cannot create a new City object', StatusCodes.INTERNAL_SERVER_ERROR);
 
-}
+};
+
+// const updateCity = async(id ,data)=>{
+//     const cityRepository = new CityRepository();
+
+//     try {
+//         return await cityRepository.update(id, data)
+//     } catch (error) {
+//         console.log(error);
+        
+//         if(error.statusCode === StatusCodes.NOT_FOUND){
+//             throw new AppError('The City you requested to update is not found!', error.statusCode);
+//         }
+//         throw new AppError('Cannot update city', StatusCodes.INTERNAL_SERVER_ERROR);
+//     }
+// };
+
+const updateCity = async (id, data) => {
+    const cityRepository = new CityRepository();
+
+    try {
+        return await cityRepository.update(id, data);
+    } catch (error) {
+        if (error.statusCode === StatusCodes.NOT_FOUND) {
+            throw new AppError('The city you requested to update is not found!', error.statusCode);
+        }
+        throw new AppError("Cannot update city", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+};
+
 
 module.exports ={
-    createCity
+    createCity,
+    updateCity
 }

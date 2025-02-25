@@ -71,7 +71,6 @@ const updateAirplane = async (id, data) => {
     try {
         return await airplaneRepository.update(id, data);
     } catch (error) {
-        console.error('Update Airplane Error:', error);
         if (error.statusCode === StatusCodes.NOT_FOUND) {
             throw new AppError('The airplane you requested to update is not found!', error.statusCode);
         }
