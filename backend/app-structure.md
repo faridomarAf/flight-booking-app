@@ -131,7 +131,11 @@ timeline minutes: 2:11
 Properties of aiports: airportName, ariport_address, unique_airport_code, cityId, note: cityId is act as a foreign-key
 . Note: the ariport model is our first 'one to many association', 
 
-. Note: in order to mapping between city and airport, from [city model migration file] we should take 'id' as a foreign-key and add it to the [airport migration file], we should associate it with "cityId inside the airport migration file".
+1: to create airport model:=>  npx sequelize model:generate --name Airport --attributes name:string,code:string,address:string,cityId:integer
+
+2: to add city model to db:=> npx sequeliz db:migrate
+
+. Note: in order to mapping between "city" and "airport", from [city model migration file] we should take 'id' as a foreign-key and add it to the [airport migration file], we should associate it with "cityId inside the airport migration file".
 
   cityId: { // cityId will be our foreign key in airport-model, but currently its not a foreing-key
     type: Sequelize.INTEGER,
@@ -140,9 +144,112 @@ Properties of aiports: airportName, ariport_address, unique_airport_code, cityId
 
 How to associate it? :=> 
 
+. first if we check our Airports model:=> using ' show databases; -> use Fligthts; -> show tables; -> desc Airports;' the output is as below, "cityId is just a raw integer"
+
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int          | NO   | PRI | NULL    | auto_increment |
+| name      | varchar(255) | NO   | UNI | NULL    |                |
+| code      | varchar(255) | NO   | UNI | NULL    |                |
+| address   | varchar(255) | YES  | UNI | NULL    |                |
+| cityId    | int          | NO   |     | NULL    |                |
+| createdAt | datetime     | NO   |     | NULL    |                |
+| updatedAt | datetime     | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+
+NOW: How to associate it? :=> with foreign key:
+. we should make a database level change,
+. to make a database level change, we should update the Airport model as below:
+. to update Airport-model, it will create a new updated migration-file for airport in migrations-repository
+  :=> npx sequelize migration:generate --name update-city-airport-association
+
+=> the created migration file as below:
+
+module.exports = {
+  async up (queryInterface, Sequelize) {
+
+  },
+
+  async down (queryInterface, Sequelize) {
+
+  }
+};
+
+. now we should define our code in migration file, which what exactly should happen as below:
+
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    await queryInterface.addConstraint('Airports', {// 'Airports' is name of airplane-model
+      //define constraint type
+      type: 'FOREIGN KEY',
+      name: 'city-fkey-constraint', // this a custom name of "contraint" which then use for 'async down function' when delete migration
+      fields:['cityId'],// we want [cityId field in our airport model which to add foreign key]
+      references: {// from which mode and wich field foreign-key should be taken?
+        model: 'Cities',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE', // CASCADE-value means which if any changes happen in [Cities model] it should update also in [Airports model at cityId] also
+      onDelete: 'CASCADE'
+    })
+  },
+
+  async down (queryInterface, Sequelize) {
+    queryInterface.removeConstraint('Airports', 'city-fkey-constraint')
+  }
+};
 
 
-1: to create airport model:=>  npx sequelize model:generate --name Airport --attributes name:string,code:string,address:string,cityId:integer
 
-2: to add city model to db:=> npx sequeliz db:migrate
+3: now to add foreign-key to airport-model:=> npx sequelize db:migrate
+. now if we check :=> desc Airports
+
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int          | NO   | PRI | NULL    | auto_increment |
+| name      | varchar(255) | NO   | UNI | NULL    |                |
+| code      | varchar(255) | NO   | UNI | NULL    |                |
+| address   | varchar(255) | YES  | UNI | NULL    |                |
+| cityId    | int          | NO   | MUL | NULL    |                |
+| createdAt | datetime     | NO   |     | NULL    |                |
+| updatedAt | datetime     | NO   |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+you can see changes of foreign key in this line: cityId has a key-value which is foreign-key
+
+
+4: now we should apply some constraint also at javascript-leve, becuase the previous contraints was all in database-level.
+
+. HOW TO DO THAT?
+. in modesls repository in airport.js file, we can apply the javascript-level constraint at this prart of the code:
+
+  static associate(models) {
+    // define association here
+  }
+
+  it should update like this:
+
+    static associate(models) {
+    // define association here
+    this.belongsTo(models.City,{// means aiport belogns to city
+      foreignKey: 'cityId',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
+  }
+
+  . now inside the city.js in models directory aslo we should update this port of the model: 
+
+  static associate(models) {
+    // define association here
+  }
+
+update as below:
+
+  static associate(models) {// means city has many airports 
+    // define association here
+    this.hasMany(models.Airport,{
+      foreignKey: 'cityId'
+    })
+  }
 
