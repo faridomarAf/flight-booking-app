@@ -113,4 +113,8 @@ timeline minutes: 2:11
 
 1: add the getAriplanes service, getAirplanes to the controller, getAirplanes to the routes.
 2: add the getAriplane by ID service, getAirplane to the controller, getAirplane to the routes.
+2: add the updateAriplane  service, getAirplane to the controller, getAirplane to the routes.
+2: add the deleteAriplane service, getAirplane to the controller, getAirplane to the routes.
+
+================================= 4 step:=> add city model 2:37 ============================
 
