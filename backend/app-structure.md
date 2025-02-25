@@ -127,4 +127,22 @@ timeline minutes: 2:11
 . delete route for city done
 . create cityMiddleware, Note:=> although with out middle ware our route handling the null-error for create-city-route, but when there is a null empty-value, it gos to ->city-service -> city-repository -> database, then it check for null empty-value and error for null value, instead of all these steps we can handle the null-value error at first step in city controller, by creating the 'cityMiddleware' we can handle it at this step, if there is null-value it throw error, and no need to do more process.
 
-================================= 5 step:=>  ============================
+================================= 5 step:=> Airports model ============================
+Properties of aiports: airportName, ariport_address, unique_airport_code, cityId, note: cityId is act as a foreign-key
+. Note: the ariport model is our first 'one to many association', 
+
+. Note: in order to mapping between city and airport, from [city model migration file] we should take 'id' as a foreign-key and add it to the [airport migration file], we should associate it with "cityId inside the airport migration file".
+
+  cityId: { // cityId will be our foreign key in airport-model, but currently its not a foreing-key
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  }
+
+How to associate it? :=> 
+
+
+
+1: to create airport model:=>  npx sequelize model:generate --name Airport --attributes name:string,code:string,address:string,cityId:integer
+
+2: to add city model to db:=> npx sequeliz db:migrate
+
