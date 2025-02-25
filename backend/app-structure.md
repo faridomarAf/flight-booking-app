@@ -125,4 +125,6 @@ timeline minutes: 2:11
 . get all-cities route done
 . get city-by-Id route done
 . delete route for city done
+. create cityMiddleware, Note:=> although with out middle ware our route handling the null-error for create-city-route, but when there is a null empty-value, it gos to ->city-service -> city-repository -> database, then it check for null empty-value and error for null value, instead of all these steps we can handle the null-value error at first step in city controller, by creating the 'cityMiddleware' we can handle it at this step, if there is null-value it throw error, and no need to do more process.
 
+================================= 5 step:=>  ============================
