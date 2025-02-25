@@ -117,4 +117,5 @@ timeline minutes: 2:11
 2: add the deleteAriplane service, getAirplane to the controller, getAirplane to the routes.
 
 ================================= 4 step:=> add city model 2:37 ============================
-
+1: to create city model:=> npx sequelize model:generate --name City --attributes name:string
+2: to add city model to db:=> npx sequeliz db:migrate
