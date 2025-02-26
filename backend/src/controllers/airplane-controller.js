@@ -20,6 +20,7 @@ const createAirplane = async (req, res)=>{
     }
 };
 
+//Get all airplanes
 const getAirplanes = async(req, res)=>{
     try {
         const airplanes = await AirplaneService.getAirplanes();

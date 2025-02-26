@@ -65,6 +65,8 @@ const updateAirport = async (id, data)=>{
         const airport = await airportRepository.update(id, data);
         return airport
     } catch (error) {
+        console.log(error);
+        
         if (error.statusCode === StatusCodes.NOT_FOUND) {
             throw new AppError('The airport you requested to update is not found!', error.statusCode);
         }
