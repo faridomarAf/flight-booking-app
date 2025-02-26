@@ -230,13 +230,20 @@ you can see changes of foreign key in this line: cityId has a key-value which is
   it should update like this:
 
     static associate(models) {
-    // define association here
-    this.belongsTo(models.City,{// means aiport belogns to city
-      foreignKey: 'cityId',
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
-    });
-  }
+      // define association here
+      this.belongsTo(models.City,{
+        foreignKey: 'cityId',
+        onDelete: 'CASCADE',
+      });
+      this.hasMany(models.Flight,{// at any point of time if you want to get all the flights thats are goig to fly from an airport, we can easily get that by this code
+        foreignKey:'departureAirportId',
+        onDelete:'CASCADE'
+      });
+      this.hasMany(models.Flight,{// to get flights wich comming  to airport
+        foreignKey:'arrivalAirportId',
+        onDelete:'CASCADE'
+      });
+    }
 
   . now inside the city.js in models directory aslo we should update this port of the model: 
 
@@ -253,3 +260,117 @@ update as below:
     })
   }
 
+
+================================= 6 step:=> Flight model ============================
+
+1: now lets create a Flight-model,
+How to do that:=> npx sequelize model:generate --name Flight --attributes flightNumber:string,airplaneId:integer,departureAirportId:integer,arrivalAirportId:integer,arrivalTime:date,departureTime:date,price:integer,boardingGate:string,totalSeats:integer 
+
+. NOW, after creating the Flight-model, we should update our flight-migration file, its ariplaneId as below:
+      airplaneId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references:{
+          table:'Airplanes',
+          field:'id'
+        },
+        onDelete:'CASCADE'
+      }, it would add the [field:'id'] as a foreign-key to our Flight-model.
+
+we do the same modification for:
+
+      departureAirportId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references:{
+          table:'Airports',
+          field:'code'// it is as a foreign-key
+        },
+        onDelete:'CASCADE'
+      },
+      arrivalAirportId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references:{
+          table:'Airports',
+          field:'code'// it is as a foreign-key
+        },
+        onDelete:'CASCADE'
+      },
+
+. also we should modify the "static associate" of our flight model in [models directory] as below:
+
+from this version:
+
+    static associate(models) {
+      // define association here
+    }
+
+should change to this:
+
+    static associate(models) {
+      this.belongsTo(models.Airplane, {// [Airplane is the class name of airplane.js in models directory same directory]
+        foreignKey:'airplaneId'// this [airplaneId] in the airplane-migration file, referenced to the [Airports migration file]
+      });
+      this.belongsTo(models.Airport,{
+        foreignKey:'departureAirportId'
+      });
+      this.belongsTo(models¯.Airport,{
+        foreignKey:'arrivalAirportId'
+      });
+    }
+
+
+
+. also we need to do modification in [airplane.js file] in models-directory as well,
+before:
+
+    static associate(models) {
+      // define association here
+    }
+
+after modification:
+
+    static associate(models) {
+      // define association here
+      this.hasMany(models.Flight, {
+        foreignKey:'airplaneId',
+        onDelete:'CASCADE'
+      })
+    }
+NOTE: these association and foreign-key are because of that, if an airplane deleted from databases, no flights for that airplane should exist
+
+
+Note: we have three associations, based on three different models,[airplane, airport, flight],
+
+2: now lets migrate our models to database:=> npx sequelize db:migrate
+
+. now if we check:=> show tables:
+| Tables_in_fligthts |
++--------------------+
+| Airplanes          |
+| Airports           |
+| Cities             |
+| Flights            |
+| SequelizeMeta      |
++--------------------+ we have our tables
+
+to describe the 'Flights' model:=> desc Flights:
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| id                 | int          | NO   | PRI | NULL    | auto_increment |
+| flightNumber       | varchar(255) | NO   |     | NULL    |                |
+| airplaneId         | int          | NO   | MUL | NULL    |                |this line we have our constraints
+| departureAirportId | varchar(255) | NO   | MUL | NULL    |                |this line we have our constraints
+| arrivalAirportId   | varchar(255) | NO   | MUL | NULL    |                |this line we have our constraints
+| arrivalTime        | datetime     | NO   |     | NULL    |                |
+| departureTime      | datetime     | NO   |     | NULL    |                |
+| price              | int          | NO   |     | NULL    |                |
+| boardingGate       | varchar(255) | YES  |     | NULL    |                |
+| totalSeats         | int          | NO   |     | NULL    |                |
+| createdAt          | datetime     | NO   |     | NULL    |                |
+| updatedAt          | datetime     | NO   |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+
+. now to check the constraints of each table we can use use the below command, tables like[Flights,Airplanes....]:
+:=> select * from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where TABLE_NAME = "flights" and CONSTRAINT_SCHEMA = "flights";
