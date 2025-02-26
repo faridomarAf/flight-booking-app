@@ -374,3 +374,7 @@ to describe the 'Flights' model:=> desc Flights:
 
 . now to check the constraints of each table we can use use the below command, tables like[Flights,Airplanes....]:
 :=> select * from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where TABLE_NAME = "flights" and CONSTRAINT_SCHEMA = "flights";
+
+
+================================= 7 step:=> create route for airport ============================
+

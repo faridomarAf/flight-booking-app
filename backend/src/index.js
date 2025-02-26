@@ -15,4 +15,4 @@ app.use('/api', apiRoutes);
 
 app.listen(ServerConfig.PORT, ()=>{
     console.log(`App is running on Port: ${ServerConfig.PORT}`);
-})
+});
