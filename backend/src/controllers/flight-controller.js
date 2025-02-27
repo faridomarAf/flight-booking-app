@@ -17,8 +17,6 @@ const {AppError} = require('../utils');
         "price": "3500",
         "totalSeats": "120",
     },
-
-
 */
 const createFlight = async(req, res)=>{
     const {

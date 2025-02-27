@@ -391,9 +391,40 @@ to describe the 'Flights' model:=> desc Flights:
 
 1: create flight-route API is completed.
 . for this route at flight-service in createFlight-funtion we also hadled the logic of:
- [departure date is not later than or equal to the arrival date]
+ [departure date is not later than or equal to the arrival date as below:
+ 
+ const createFlight = async (data) => {
 
- 2: 
+    // Validate departureTime and arrivalTime
+    const departureTime = new Date(data.departureTime);
+    const arrivalTime = new Date(data.arrivalTime);
+
+    if (departureTime >= arrivalTime) {
+        throw new AppError(
+            "Departure time must be earlier than arrival time",
+            StatusCodes.BAD_REQUEST
+        );
+    }
+
+    const flightRepository = new FlightRepository();
+    try {
+        const flight = await flightRepository.create(data);
+        return flight;
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            let explanation = [];
+            error.errors.forEach((err) => {
+                explanation.push(err.message);
+            });
+
+            throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+        }
+        throw new AppError("Cannot create a new Flight object", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+};
+]
+
+ 2: add the [getAllFlights function] in " flight-repository.js file ", in order to filter the customers requests regarding to flight-searching
 
 
 
