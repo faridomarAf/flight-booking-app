@@ -376,5 +376,17 @@ to describe the 'Flights' model:=> desc Flights:
 :=> select * from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where TABLE_NAME = "flights" and CONSTRAINT_SCHEMA = "flights";
 
 
-================================= 7 step:=> create route for airport ============================
+================================= 7 step:=> create APIs for airport ============================
 
+. all the crud-resources added for airport-routes
+
+================================= 8 step:=> create APIs for flight ============================
+
+. Note: the main agenda is that: to make sure the users are ables to see new flights, they be able to make some:  
+[
+  filters, they should be able to make different types of filters, 
+  they should be able to arrange flights in 'assending' or 'dessending' mode
+  ...
+],
+
+. CREATE flight-repository.js files in repositories-folder,
