@@ -389,4 +389,11 @@ to describe the 'Flights' model:=> desc Flights:
   ...
 ],
 
-. CREATE flight-repository.js files in repositories-folder,
+1: create flight-route API is completed.
+. for this route at flight-service in createFlight-funtion we also hadled the logic of:
+ [departure date is not later than or equal to the arrival date]
+
+ 2: 
+
+
+
