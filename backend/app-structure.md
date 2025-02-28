@@ -424,7 +424,67 @@ to describe the 'Flights' model:=> desc Flights:
 };
 ]
 
- 2: add the [getAllFlights function] in " flight-repository.js file ", in order to filter the customers requests regarding to flight-searching
+ 2: add the [getAllFlights function] in  'flight-repository.js file' , in order to filter the customers requests regarding to flight-searching as below:
+
+     async getAllFlights (filter){
+        const response = await Flight.findAll({
+            where: filter
+        });
+        return response
+    };
+
+2: create the getAllFlights in flight-service also, to add the logic of searching:
+
+const getAllFlights = async(query)=>{
+    let customFilter = {};
+
+    if(query.trips){//if the condition true, we will get as string like:=> [trips=MUM-DEL] in search-rul
+        // to achive it [trips=MUM-DEL] in url
+        [departureAirportId, arrivalAirportId] = query.trips.split("-");
+        customFilter.departureAirportId = departureAirportId;
+        customFilter.arrivalAirportId = arrivalAirportId;
+        //TODO: add a check which "departureAirportId" and "arrivalAirportId" are not the same, if, it should retrun null or Error
+    }
+
+    const flightRepository = new FlightRepository();
+
+    try {
+        const flights = await flightRepository.getAllFlights(customFilter);
+        return flights;
+    } catch (error) {
+        throw new AppError('Cannot fetch data of all the Flights', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+. Now to use our getFlights route with it Search-functionality we do as Below:
+[ 
+  1: in postmant select the the "Params at left-corner-top"
+  . key :=> trips
+  . vlaue:=> DEL-MUM
+  . the url would be like this: http://localhost:3500/api/v1/flights?trips=DEL-MUM
+  . it would search all the Flights which, their 'departure-aiport' is [DEL, which is the code of Delhi-ariport] and arrivale-airport is [MUM which is the code of Mumbia-airport]
+]
+
+
+. Now lets make filter to get Flights based-on price filter, to do that, we need to use a custom-sequelize-operator to use its functionality, which is "Op" we should import it into our flight-service-file as below:
+. [ const {Op} = require('sequelize'); ]
+
+we add this condition to getAllFlights in flight-service-file, it would make us able to search flights based on pric-range:
+
+    if(query.price){
+        [minPrice, maxPrice] = query.price.split("-");
+        customFilter.price = {
+            [Op.between] : [minPrice, maxPrice],
+        }
+    }
+
+  2: in postmant select the the "Params at left-corner-top"
+  . key :=> price
+  . vlaue:=> 5000-7500
+  . it would only searh flight between these ranges:[5000-7500]
+
+  
+
 
 
 

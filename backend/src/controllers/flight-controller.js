@@ -53,6 +53,21 @@ const createFlight = async(req, res)=>{
 };
 
 
+//Get all Flights
+const getAllFlights = async (req, res)=>{
+    try {
+        // to pass the whole query-object to the service
+        const flights = await FlightService.getAllFlights(req.query);
+        SuccessResponse.data = flights;
+        return res.status(StatusCodes.OK).json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.error = error;
+        return res.status(error.statusCode).json(ErrorResponse);
+    }
+};
+
+
 module.exports = {
-    createFlight
+    createFlight,
+    getAllFlights
 }

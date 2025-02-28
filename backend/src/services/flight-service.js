@@ -1,6 +1,7 @@
 const {FlightRepository} = require('../repositories');
 const {StatusCodes} = require('http-status-codes');
 const { AppError } = require('../utils');
+const {Op} = require('sequelize');
 
 const createFlight = async (data) => {
 
@@ -33,6 +34,43 @@ const createFlight = async (data) => {
 };
 
 
+/*
+Get all Flights, this function is going to takes some filters as below:
+. trips=> currentLocation->destination
+. 
+*/
+const getAllFlights = async(query)=>{
+    let customFilter = {};
+
+    if(query.trips){//if the condition true, we will get as string like:=> [trips=MUM-DEL] in search-rul
+        // to achive it [trips=MUM-DEL] in url
+        [departureAirportId, arrivalAirportId] = query.trips.split("-");
+        customFilter.departureAirportId = departureAirportId;
+        customFilter.arrivalAirportId = arrivalAirportId;
+        //TODO: add a check which "departureAirportId" and "arrivalAirportId" are not the same, if, it should retrun null or Error
+    }
+
+    // Lets add price-based filter
+    if(query.price){
+        [minPrice, maxPrice] = query.price.split("-");
+        customFilter.price = {
+            [Op.between] : [minPrice, maxPrice],
+        }
+    }
+
+
+    const flightRepository = new FlightRepository();
+
+    try {
+        const flights = await flightRepository.getAllFlights(customFilter);
+        return flights;
+    } catch (error) {
+        throw new AppError('Cannot fetch data of all the Flights', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+};
+
+
 module.exports = {
-    createFlight
+    createFlight,
+    getAllFlights
 }
