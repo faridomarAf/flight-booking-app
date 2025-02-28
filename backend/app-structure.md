@@ -472,9 +472,12 @@ const getAllFlights = async(query)=>{
 we add this condition to getAllFlights in flight-service-file, it would make us able to search flights based on pric-range:
 
     if(query.price){
+        console.log(query.price);
+        
         [minPrice, maxPrice] = query.price.split("-");
         customFilter.price = {
-            [Op.between] : [minPrice, maxPrice],
+            //if user does not provide a maxPrice, it would automaticaly assign the maxPrice to 100000
+            [Op.between] : [minPrice , (maxPrice === undefined ? '100000': maxPrice)],
         }
     }
 
@@ -483,7 +486,37 @@ we add this condition to getAllFlights in flight-service-file, it would make us 
   . vlaue:=> 5000-7500
   . it would only searh flight between these ranges:[5000-7500]
 
-  
+
+. Add filter based on Number of Travellers, number of travellers should always be equal or smaller than number of totalSets which are available, not greater,
+
+    if(query.travellers){
+        customFilter.totalSeats = {
+            [Op.gte]: query.travellers // [gte means greater or equal], means that totalSets should be greater of equal to number of travellers
+        }
+    }
+
+. Add flter base on Date
+     if(query.tripDate){
+        customFilter.departureTime = {
+            [Op.startsWith]: query.tripDate.split(" ")[0]// it change the date from this format ["2025-07-16T22:30:12.000Z which the date-format in data base] to this form [2025-07-16, which user sent it as a query]
+        }
+    }
+
+. ===== Now let also apply some sorte functionality:
+
+. To sort Flight based on price_ASC or price_DESC OR bassed-on departureTime_ASC or departureTime_DESC, we do the below steps:
+. first add the sort query also to the [getAllFlights funciton inside the flight-repository.js file] as an argument.
+. next: create a [sortFilter variable to hold the sort value in the getAllFlights-function in flight-service.js file] as below:
+  let sortFilter = [];
+
+  now create the condition:
+     if(query.sort){
+        const params = query.sort.split(",");// to separate the query in url with ","
+        const sortFilters = params.map((param)=> param.split("_"));
+        sortFilter = sortFilters
+    }
+
+
 
 
 

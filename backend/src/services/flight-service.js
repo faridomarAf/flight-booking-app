@@ -41,7 +41,9 @@ Get all Flights, this function is going to takes some filters as below:
 */
 const getAllFlights = async(query)=>{
     let customFilter = {};
+    let sortFilter = [];
 
+    //Filter for current location to travel-destination
     if(query.trips){//if the condition true, we will get as string like:=> [trips=MUM-DEL] in search-rul
         // to achive it [trips=MUM-DEL] in url
         [departureAirportId, arrivalAirportId] = query.trips.split("-");
@@ -50,21 +52,44 @@ const getAllFlights = async(query)=>{
         //TODO: add a check which "departureAirportId" and "arrivalAirportId" are not the same, if, it should retrun null or Error
     }
 
-    // Lets add price-based filter
+    // add filter based on min and max price
     if(query.price){
         [minPrice, maxPrice] = query.price.split("-");
         customFilter.price = {
-            [Op.between] : [minPrice, maxPrice],
+            [Op.between] : [minPrice , (maxPrice === undefined ? '100000': maxPrice)],
         }
+    }
+
+    //add filter for number of travellers
+    if(query.travellers){
+        customFilter.totalSeats = {
+            [Op.gte]: query.travellers
+        }
+    }
+
+    //add filter based on same Date
+    if(query.tripDate){
+        customFilter.departureTime = {
+            [Op.startsWith]: query.tripDate.split(" ")[0]
+        }
+    }
+    
+    // add sort-filter
+    if(query.sort){
+        const params = query.sort.split(",");
+        const sortFilters = params.map((param)=> param.split("_"));
+        sortFilter = sortFilters
     }
 
 
     const flightRepository = new FlightRepository();
 
     try {
-        const flights = await flightRepository.getAllFlights(customFilter);
+        const flights = await flightRepository.getAllFlights(customFilter, sortFilter);
         return flights;
     } catch (error) {
+        console.log(error);
+        
         throw new AppError('Cannot fetch data of all the Flights', StatusCodes.INTERNAL_SERVER_ERROR);
     }
 };
