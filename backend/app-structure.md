@@ -515,9 +515,95 @@ we add this condition to getAllFlights in flight-service-file, it would make us 
         const sortFilters = params.map((param)=> param.split("_"));
         sortFilter = sortFilters
     }
+. ============== Note, Regarding to Searching ===========================
+. now that we applied the searching and sorting functionality to the getAllFlights-API, when we search flights, its only shows the flights by their General-Properties, consider the the search below:
+-- we search for trips from DEL->to->BLR then the search result would be these general-information, nothing specific about airplane-object. 
+
+        {
+            "id": 1,
+            "flightNumber": "UK 808",
+            "airplaneId": 1,
+            "departureAirportId": "MUM",
+            "arrivalAirportId": "BLR",
+            "arrivalTime": "2025-01-16T23:03:12.000Z",
+            "departureTime": "2025-01-16T21:03:12.000Z",
+            "price": 3500,
+            "boardingGate": null,
+            "totalSeats": 120,
+            "createdAt": "2025-02-27T05:22:01.000Z",
+            "updatedAt": "2025-02-27T05:22:01.000Z"
+        }
+
+-- So it should also shows the airplane-object regarding to its ["id": 1,] to achive that:
+
+. in flight-repository.js, we can midify the 'getAllFlights-function and add joints to achive our goals' as below:
+
+--1: we should require the Airpalne-Modle and Airport-model:
+const {Airplane, Airport} = require('../models'); 
+
+--2: include them to our getAllFlights-funciton:
+
+    async getAllFlights (filter, sort){
+        const response = await Flight.findAll({
+            where: filter,
+            order: sort,
+            include:[
+             {
+                model: Airplane,
+                required: true,
+                as: 'ariplane_details'// this is the name to be shown in search result istead of 'Airplane', in search result we should see [ariplane_details], 
+                NOTE: we should also add it to ariplane_details to the flight.js model,
+            },
+            {
+                model: Airport,
+                required: true,
+                as: 'departure_airport',// this is the name to be shown in search result istead of 'Airport', in search result we should see [departure_airport]
+                on : {
+                    col1 : Sequelize.where(Sequelize.col("Flight.departureAirportId"), "=", Sequelize.col("departure_airport.code"))
+                }
+            },
+        ]
+        });
+        return response
+    };
+
+. Now the search result would include also the ariplane-objcet and Airport-object with their infromation:
+. we can include all 'properties which we referenced' if its need
+
+        {
+            "id": 1,
+            "flightNumber": "UK 808",
+            "airplaneId": 1,
+            "departureAirportId": "MUM",
+            "arrivalAirportId": "BLR",
+            "arrivalTime": "2025-01-16T23:03:12.000Z",
+            "departureTime": "2025-01-16T21:03:12.000Z",
+            "price": 3500,
+            "boardingGate": null,
+            "totalSeats": 120,
+            "createdAt": "2025-02-27T05:22:01.000Z",
+            "updatedAt": "2025-02-27T05:22:01.000Z",
+            "ariplane_details": {
+                "id": 1,
+                "modelNumber": "aribus480",
+                "capacity": 330,
+                "createdAt": "2025-02-22T09:58:54.000Z",
+                "updatedAt": "2025-02-24T10:47:31.000Z"
+            },
+            "departure_airport": {
+                "id": 14,
+                "name": "CSI Airport",
+                "code": "MUM",
+                "address": null,
+                "cityId": 8,
+                "createdAt": "2025-02-26T11:14:56.000Z",
+                "updatedAt": "2025-02-26T11:14:56.000Z"
+            }
+            // aslo we could have 'arrival_airport', as we did 'getAllFlights-function in flight-repository.js'
+        }
 
 
 
-
-
+=========================================================   Create Seat model  ========================================================
+1: to create seat model:=> npx sequelize model:generate --name Seat --attributes airplaneId:integer,row:integer,col:string,type:string
 
