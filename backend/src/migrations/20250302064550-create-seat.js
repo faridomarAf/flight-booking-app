@@ -14,7 +14,12 @@ module.exports = {
       },
       airplaneId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references:{
+          model: 'Airplanes',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       row: {
         type: Sequelize.INTEGER,

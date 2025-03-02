@@ -607,3 +607,39 @@ const {Airplane, Airport} = require('../models');
 =========================================================   Create Seat model  ========================================================
 1: to create seat model:=> npx sequelize model:generate --name Seat --attributes airplaneId:integer,row:integer,col:string,type:string
 
+2: add association to seat-model, we should add them to [seat-migration-file]
+
+. A: a seat is belong to an airplane, and airplane has many seats, so, in migration file we have 'airplaneId' property, which we should reference it to the 'Airplane model' as below:
+
+      airplaneId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references:{
+          model: 'Airplanes',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
+      },
+
+. B: also we should make the reference in the [seat.js file] in models-directory, which a seat belongs to airplane
+  we do that as below:
+
+      static associate(models) {
+      // define association here
+      this.belongsTo(models.Airplane,{
+        foreignKey: 'airplaneId'
+      })
+    }
+
+. C: now we should also reference the airplane-model.js to the seat-model.js, we do that as below:
+
+      this.hasMany(models.Seat,{
+        foreignKey:'airplaneId',
+        onDelete:'CASCADE'
+      })
+      
+. NOTE: what type connection we have setup?, it on-to-many connection, which an airplane has many seats, seats belong to airplane
+
+
+3: now lets add it to Database:=> npx sequelize db:migrate
+
