@@ -643,3 +643,9 @@ const {Airplane, Airport} = require('../models');
 
 3: now lets add it to Database:=> npx sequelize db:migrate
 
+============================================  Create Seader-file in seeder-directory for Seat model  ========================================================
+
+1: to create a seeder file:=> npx sequelize seed:generate --name add-seats
+. it would create a seeder file which we could use it for seat-model
+
+2: add seeder file data to database:=> npx sequelize db:seed --seed 20250302081307-add-seats.js [ "20250302081307-add-seats.js "this name of the sead-file ]
