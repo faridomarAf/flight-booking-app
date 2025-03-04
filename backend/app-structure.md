@@ -649,3 +649,8 @@ const {Airplane, Airport} = require('../models');
 . it would create a seeder file which we could use it for seat-model
 
 2: add seeder file data to database:=> npx sequelize db:seed --seed 20250302081307-add-seats.js [ "20250302081307-add-seats.js "this name of the sead-file ]
+
+============================================== add two other API route for flight ======================
+
+. getFlight by ID, 
+. 
