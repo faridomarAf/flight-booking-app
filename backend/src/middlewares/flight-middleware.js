@@ -55,7 +55,18 @@ const validateCreateRequest = async(req, res, next)=>{
     next();
 };
 
+const validateUpdateSeats = async(req, res, next)=>{
+    if(!req.body.seats){
+        ErrorResponse.message = 'Something went wrong when updating Flight seats!';
+        ErrorResponse.error = new AppError('seats cannot be null, or wrong format', StatusCodes.BAD_REQUEST);
+        return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+    }
+
+    next();
+}
+
 
 module.exports ={
-    validateCreateRequest
+    validateCreateRequest,
+    validateUpdateSeats
 }

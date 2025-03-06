@@ -107,11 +107,23 @@ const getFlight = async(id)=>{
         }
         throw new AppError('Cannot fetch of the Flight by its ID!', StatusCodes.INTERNAL_SERVER_ERROR);
     }
-}
+};
+
+//Update the flight seats
+const updateSeats = async(data)=>{
+    const flightRepository = new FlightRepository();
+    try {
+        const response = await flightRepository.updateRemainingSeats(data.flightId, data.seats, data.decrease);
+        return response;
+    } catch (error) {
+        throw new AppError('Cannot update data of the Fligh!', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+};
 
 
 module.exports = {
     createFlight,
     getAllFlights,
-    getFlight
+    getFlight,
+    updateSeats
 }

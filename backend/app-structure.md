@@ -653,4 +653,18 @@ const {Airplane, Airport} = require('../models');
 ============================================== add two other API route for flight ======================
 
 . getFlight by ID, 
-. 
+. at flightRepository create a function to decrease or increatse the number of seats,
+
+    async updateRemainingSeats(flightId, seats, decrease) {
+        //applies a row-level lock, means its prevent two or more users which at same time do any update on a row-value
+        await db.sequelize.query(addRowLockOnFlights(flightId));
+        const flight = await Flight.findByPk(flightId);
+    
+        if (parseInt(decrease)) {
+            await flight.decrement('totalSeats', { by: seats });
+        } else {
+            await flight.increment('totalSeats', { by: seats });
+        }
+        await flight.reload(); //to get updated values
+        return flight;
+    }
