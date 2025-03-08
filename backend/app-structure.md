@@ -29,6 +29,7 @@ and finally search for that
 . option to cancel the boarding
 . update user regarding any delay in flight time
 
+5: aslo it has the booking service which use in purposes of booking that is 'flight-booking-service'
 ================================= After our first curd adding airplane : First step ============================
 
 1: we created airplane-middleware to handle the correct error of 400-bad request instead of 500 which was by default, which occurs when the use send null-value for 'modelNumber' or wrong format of input.
